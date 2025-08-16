@@ -58,7 +58,19 @@ export interface ApiError {
     message: string;
     type: string;
     code?: string;
-  };
+    choices?: Array<{
+      message: {
+        role: string;
+        content: string;
+      }
+    }>;
+  } | null;
+  choices?: Array<{
+    message: {
+      role: string;
+      content: string;
+    }
+  }>;
 }
 
 export interface HealthResponse {
@@ -73,5 +85,6 @@ export interface ConnectionStatus {
   lastChecked: Date;
   error?: string;
   fastapi_status: 'connected' | 'disconnected' | 'error';
+  node_status: 'connected' | 'disconnected' | 'error';
   mcp_status: 'connected' | 'disconnected' | 'error';
 }

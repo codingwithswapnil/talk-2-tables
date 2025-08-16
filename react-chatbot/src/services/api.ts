@@ -17,7 +17,13 @@ class ApiService {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
+    const backend = import.meta.env.VITE_API_BACKEND || 'node';
+const BASE_URL =
+  backend === 'fastapi'
+    ? import.meta.env.VITE_API_BASE_URL_FASTAPI
+    : import.meta.env.VITE_API_BASE_URL_NODE;
+
+    this.baseURL = BASE_URL || 'http://localhost:3001';
 
     this.client = axios.create({
       baseURL: this.baseURL,
@@ -61,8 +67,12 @@ class ApiService {
     if (error.response) {
       // Server responded with error status
       const apiError: ApiError = error.response.data;
+
       if (apiError?.error?.message) {
         return new Error(apiError.error.message);
+      }
+      else if (apiError?.choices && apiError?.choices.length > 0) {
+        return new Error(apiError.choices[0].message?.content);
       }
       return new Error(`API Error: ${error.response.status} - ${error.response.statusText}`);
     } else if (error.request) {

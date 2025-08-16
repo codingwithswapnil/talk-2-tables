@@ -27,6 +27,7 @@ import {
   Storage as StorageIcon,
 } from '@mui/icons-material';
 import type { ConnectionStatus as ConnectionStatusType } from '../types/chat.types';
+const node_or_fastapi = import.meta.env.VITE_API_BACKEND
 
 interface ConnectionStatusProps {
   status: ConnectionStatusType;
@@ -190,19 +191,38 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
 
             {/* Service List */}
             <List dense sx={{ mb: 1 }}>
-              <ListItem disablePadding>
-                <ListItemIcon sx={{ minWidth: 36 }}>
-                  <WifiIcon
-                    fontSize="small"
-                    color={getStatusColor(status.fastapi_status) as 'success' | 'error' | 'warning'}
+
+              {node_or_fastapi === 'fastapi' && (
+                <ListItem disablePadding>
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <WifiIcon
+                      fontSize="small"
+                      color={getStatusColor(status.fastapi_status) as 'success' | 'error' | 'warning'}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="FastAPI Server"
+                    secondary={getStatusText(status.fastapi_status)}
                   />
-                </ListItemIcon>
-                <ListItemText
-                  primary="FastAPI Server"
-                  secondary={getStatusText(status.fastapi_status)}
-                />
-                {getStatusIcon(status.fastapi_status)}
-              </ListItem>
+                  {getStatusIcon(status.fastapi_status)}
+                </ListItem>
+              )}
+
+              {node_or_fastapi === 'node' && (
+                <ListItem disablePadding>
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <WifiIcon
+                      fontSize="small"
+                      color={getStatusColor(status.node_status) as 'success' | 'error' | 'warning'}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Node Server"
+                    secondary={getStatusText(status.node_status)}
+                  />
+                  {getStatusIcon(status.node_status)}
+                </ListItem>
+              )}
 
               <ListItem disablePadding>
                 <ListItemIcon sx={{ minWidth: 36 }}>

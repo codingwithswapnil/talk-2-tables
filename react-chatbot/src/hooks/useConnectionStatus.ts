@@ -6,6 +6,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ConnectionStatus } from '../types/chat.types';
 import { apiService } from '../services/api';
 
+const node_or_fastapi = import.meta.env.VITE_API_BACKEND || 'node';
+
 interface UseConnectionStatusProps {
   checkInterval?: number;
   autoStart?: boolean;
@@ -27,6 +29,7 @@ export const useConnectionStatus = ({
     isConnected: false,
     lastChecked: new Date(),
     fastapi_status: 'disconnected',
+    node_status: 'disconnected',
     mcp_status: 'disconnected'
   });
 
@@ -40,6 +43,7 @@ export const useConnectionStatus = ({
       // Check FastAPI server health
       const healthResponse = await apiService.checkHealth();
       const fastapiConnected = healthResponse.status === 'healthy';
+      const nodeConnected = healthResponse.status === 'healthy';
 
       let mcpConnected = false;
       let mcpError: string | undefined;
@@ -47,6 +51,8 @@ export const useConnectionStatus = ({
       try {
         // Check MCP server status through FastAPI
         const mcpResponse = await apiService.getMcpStatus();
+
+        console.log(mcpResponse)
         mcpConnected = mcpResponse.connected === true;
         if (!mcpConnected && mcpResponse.error) {
           mcpError = mcpResponse.error;
@@ -55,13 +61,16 @@ export const useConnectionStatus = ({
         mcpError = mcpErr instanceof Error ? mcpErr.message : 'MCP connection failed';
       }
 
+      const apiConnected = (node_or_fastapi === 'fastapi' ? fastapiConnected : nodeConnected)
+
       setStatus({
-        isConnected: fastapiConnected && mcpConnected,
+        isConnected: apiConnected && mcpConnected,
         lastChecked: now,
         fastapi_status: fastapiConnected ? 'connected' : 'error',
+        node_status: nodeConnected ? 'connected' : 'error',
         mcp_status: mcpConnected ? 'connected' : 'error',
-        error: !fastapiConnected
-          ? 'FastAPI server unreachable'
+        error: !apiConnected
+          ? 'Server unreachable'
           : !mcpConnected
             ? `MCP server issue: ${mcpError || 'Connection failed'}`
             : undefined
@@ -74,6 +83,7 @@ export const useConnectionStatus = ({
         isConnected: false,
         lastChecked: now,
         fastapi_status: 'error',
+        node_status: 'error',
         mcp_status: 'disconnected',
         error: errorMessage
       });
