@@ -26,7 +26,7 @@ import {
   Wifi as WifiIcon,
   Storage as StorageIcon,
 } from '@mui/icons-material';
-import { ConnectionStatus as ConnectionStatusType } from '../types/chat.types';
+import type { ConnectionStatus as ConnectionStatusType } from '../types/chat.types';
 
 interface ConnectionStatusProps {
   status: ConnectionStatusType;
@@ -85,7 +85,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
   const formatLastChecked = (date: Date): string => {
     const now = new Date();
     const diffSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffSeconds < 60) {
       return 'Just now';
     } else if (diffSeconds < 3600) {
@@ -133,7 +133,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
         onClick={onRefresh}
         disabled={isChecking}
         title="Refresh connection status"
-        sx={{ 
+        sx={{
           p: 0.5,
           color: '#FFFFFF', // White icon for visibility on red background
           '&:hover': {
@@ -144,7 +144,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
           },
         }}
       >
-        <RefreshIcon 
+        <RefreshIcon
           fontSize="small"
           sx={{
             transform: isChecking ? 'rotate(360deg)' : 'none',
@@ -157,7 +157,7 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
       <IconButton
         size="small"
         onClick={() => setIsExpanded(!isExpanded)}
-        sx={{ 
+        sx={{
           p: 0.5,
           color: '#FFFFFF', // White icon for visibility on red background
           '&:hover': {
@@ -192,8 +192,8 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
             <List dense sx={{ mb: 1 }}>
               <ListItem disablePadding>
                 <ListItemIcon sx={{ minWidth: 36 }}>
-                  <WifiIcon 
-                    fontSize="small" 
+                  <WifiIcon
+                    fontSize="small"
                     color={getStatusColor(status.fastapi_status) as 'success' | 'error' | 'warning'}
                   />
                 </ListItemIcon>
@@ -206,8 +206,8 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
 
               <ListItem disablePadding>
                 <ListItemIcon sx={{ minWidth: 36 }}>
-                  <StorageIcon 
-                    fontSize="small" 
+                  <StorageIcon
+                    fontSize="small"
                     color={getStatusColor(status.mcp_status) as 'success' | 'error' | 'warning'}
                   />
                 </ListItemIcon>

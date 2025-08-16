@@ -4,7 +4,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { ChatMessage, QueryResult } from '../types/chat.types';
+import type { ChatMessage } from '../types/chat.types';
+import type { QueryResult } from '../types/chat.types';
 import { apiService } from '../services/api';
 
 interface UseChatProps {
@@ -31,7 +32,7 @@ export const useChat = ({
   // Load messages from localStorage if persistence is enabled
   const loadPersistedMessages = useCallback((): ChatMessage[] => {
     if (!persistMessages) return [];
-    
+
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -52,7 +53,7 @@ export const useChat = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
-  
+
   const lastUserMessageRef = useRef<string>('');
 
   // Persist messages to localStorage when they change
@@ -88,7 +89,7 @@ export const useChat = ({
 
   // Helper function to update a message
   const updateMessage = useCallback((id: string, updates: Partial<ChatMessage>) => {
-    setMessages(prev => prev.map(msg => 
+    setMessages(prev => prev.map(msg =>
       msg.id === id ? { ...msg, ...updates } : msg
     ));
   }, []);
@@ -109,9 +110,9 @@ export const useChat = ({
           };
         }
       }
-      
+
       // Look for other indicators of query results
-      if (content.includes('Query executed successfully') || 
+      if (content.includes('Query executed successfully') ||
           content.includes('rows returned') ||
           content.toLowerCase().includes('select ')) {
         // This might be a query response, but we couldn't parse structured data
@@ -125,7 +126,7 @@ export const useChat = ({
     } catch (error) {
       console.warn('Failed to process query results:', error);
     }
-    
+
     return undefined;
   }, []);
 
@@ -136,7 +137,7 @@ export const useChat = ({
 
     // Store the user message for potential retry
     lastUserMessageRef.current = content;
-    
+
     // Clear any previous errors
     setError(null);
     setIsLoading(true);
@@ -157,8 +158,8 @@ export const useChat = ({
     try {
       // Simulate typing delay
       setIsTyping(true);
-      await new Promise(resolve => setTimeout(resolve, 
-        parseInt(process.env.REACT_APP_TYPING_DELAY || '1000')
+      await new Promise(resolve => setTimeout(resolve,
+        parseInt(import.meta.env.REACT_APP_TYPING_DELAY || '1000')
       ));
       setIsTyping(false);
 
@@ -184,10 +185,10 @@ export const useChat = ({
       if (response.choices && response.choices.length > 0) {
         const choice = response.choices[0];
         const assistantResponse = choice.message.content;
-        
+
         // First try to get query results from the response structure
         let queryResult = choice.query_result || undefined;
-        
+
         // If not found, fall back to parsing from content
         if (!queryResult) {
           queryResult = processQueryResults(assistantResponse);
@@ -206,7 +207,7 @@ export const useChat = ({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
-      
+
       // Update the assistant message with error
       updateMessage(assistantMessageId, {
         content: `Sorry, I encountered an error: ${errorMessage}`,

@@ -22,4 +22,4 @@ echo ""
 echo "⚡ To stop the server, press Ctrl+C"
 echo ""
 
-npm start
+npm run dev

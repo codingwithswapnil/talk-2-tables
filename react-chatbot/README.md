@@ -1,132 +1,69 @@
-# React Chatbot for Talk2Tables
+# React + TypeScript + Vite
 
-A modern React TypeScript chatbot interface that communicates with the Talk2Tables FastAPI backend server to provide natural language database querying capabilities.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-- 🗣️ **Conversational Interface**: Chat-based interaction for database queries
-- 📊 **Query Results Display**: Sortable, searchable tables with pagination
-- 🔌 **Real-time Connection Monitoring**: Health checks for FastAPI and MCP servers
-- 💾 **Message Persistence**: Chat history saved to localStorage
-- 📱 **Responsive Design**: Mobile-friendly interface
-- 🔄 **Retry Logic**: Automatic error handling and retry capabilities
-- 📋 **Export Options**: Copy to clipboard and CSV export
-- ⌨️ **Keyboard Shortcuts**: Enter to send, Shift+Enter for new lines
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Quick Start
+## Expanding the ESLint configuration
 
-### Prerequisites
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- Node.js 16+ and npm
-- FastAPI backend server running (see main project README)
-- MCP server running with sample database
+```js
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### Installation
+      // Remove tseslint.configs.recommended and replace with this
+      ...tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      ...tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      ...tseslint.configs.stylisticTypeChecked,
 
-1. **Navigate to the React app directory:**
-   ```bash
-   cd react-chatbot
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your FastAPI server URL (default: http://localhost:8001)
-   ```
-
-4. **Start development server:**
-   ```bash
-   npm start
-   ```
-
-The app will open at `http://localhost:3000` and automatically connect to the FastAPI backend.
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `REACT_APP_API_BASE_URL` | FastAPI server URL | `http://localhost:8001` |
-| `REACT_APP_CHAT_TITLE` | Chat interface title | `Talk2Tables Chat` |
-| `REACT_APP_MAX_MESSAGE_LENGTH` | Max characters per message | `5000` |
-| `REACT_APP_TYPING_DELAY` | Simulated typing delay (ms) | `1000` |
-| `REACT_APP_DEBUG` | Enable debug logging | `true` |
-
-## Usage Examples
-
-### Natural Language Queries
-- "Show me all customers"
-- "What are our top 5 products by sales?"
-- "How many orders were placed last month?"
-- "Which customers have spent the most money?"
-
-### Direct SQL Queries
-```sql
-SELECT * FROM customers LIMIT 10;
-SELECT product_name, SUM(quantity) as total_sales 
-FROM orders o JOIN products p ON o.product_id = p.id 
-GROUP BY product_name 
-ORDER BY total_sales DESC 
-LIMIT 5;
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## Component Architecture
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### Core Components
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-- **`ChatInterface`**: Main container component
-- **`MessageList`**: Displays conversation history with auto-scroll
-- **`MessageInput`**: Input field with sample queries and keyboard shortcuts
-- **`Message`**: Individual message display with role distinction
-- **`QueryResults`**: Sortable, searchable table for database results
-- **`ConnectionStatus`**: Real-time server status monitoring
-
-### Custom Hooks
-
-- **`useChat`**: Manages chat state, message persistence, and API calls
-- **`useConnectionStatus`**: Monitors FastAPI and MCP server health
-
-### Services
-
-- **`apiService`**: HTTP client for FastAPI communication with retry logic
-
-## Development
-
-### Available Scripts
-
-```bash
-# Development server
-npm start
-
-# Build for production
-npm run build
-
-# Run tests
-npm test
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-## Integration with Backend
-
-The app connects to the FastAPI backend at `http://localhost:8001` by default and uses OpenAI-compatible chat completion endpoints.
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"Connection issues detected"**
-   - Ensure FastAPI server is running on correct port
-   - Check `.env` file configuration
-
-2. **"Network error: Unable to connect to server"**
-   - Confirm `REACT_APP_API_BASE_URL` is correct
-   - Check if FastAPI server is accessible
-
-## Related Documentation
-
-- [Main Project README](../README.md)
-- [FastAPI Server Documentation](../fastapi_server/)
-- [MCP Server Documentation](../src/talk_2_tables_mcp/)

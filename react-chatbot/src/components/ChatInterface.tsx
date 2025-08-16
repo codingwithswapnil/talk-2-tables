@@ -29,7 +29,7 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
-  
+
   // Chat functionality
   const {
     messages,
@@ -74,15 +74,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
       <AppBar position="static" elevation={2}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {process.env.REACT_APP_CHAT_TITLE || 'Talk2Tables'}
+            {import.meta.env.VITE_REACT_APP_CHAT_TITLE || 'Talk2Tables'}
           </Typography>
-          
+
           <ConnectionStatus
             status={connectionStatus}
             onRefresh={checkStatus}
             isChecking={!isMonitoring}
           />
-          
+
           <IconButton
             color="inherit"
             onClick={handleClearChat}
@@ -115,7 +115,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Messages Container */}
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
-          <MessageList 
+          <MessageList
             messages={messages}
             isTyping={isTyping}
           />
@@ -123,8 +123,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
 
         {/* Error Display */}
         {error && (
-          <Alert 
-            severity="error" 
+          <Alert
+            severity="error"
             action={
               <IconButton
                 color="inherit"
@@ -147,11 +147,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
               onSendMessage={handleSendMessage}
               disabled={isLoading || !connectionStatus.isConnected}
               placeholder={
-                !connectionStatus.isConnected 
-                  ? "Connecting to server..." 
+                !connectionStatus.isConnected
+                  ? "Connecting to server..."
                   : "Ask about your database or type SQL..."
               }
-              maxLength={parseInt(process.env.REACT_APP_MAX_MESSAGE_LENGTH || '5000')}
+              maxLength={parseInt(import.meta.env.REACT_APP_MAX_MESSAGE_LENGTH || '5000')}
             />
           </Container>
         </Paper>

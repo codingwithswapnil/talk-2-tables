@@ -7,15 +7,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Model Context Protocol (MCP) server implementation that provides SQLite database query capabilities with resource discovery. The project is part of a larger multi-component system architecture designed for AI agents to interact with distributed data sources.
 
 ### End Goal Architecture
+
 The ultimate vision is a multi-tier system:
-1. **React chatbot** ↔ **FastAPI server** 
+
+1. **React chatbot** ↔ **FastAPI server**
 2. **FastAPI server** contains an **AI agent** (OpenRouter LLMs + MCP client)
 3. **MCP client** ↔ **Multiple MCP servers** (like this one) in data source systems
 4. Each **data source system** has MCP servers + SQLite databases
 5. AI agent uses resource discovery to route queries to appropriate MCP servers
 
 ### Current Implementation Status
+
 This repository implements the **complete multi-tier system with multi-LLM support** including:
+
 - **MCP Server**: SQLite database query capabilities via MCP protocol with resource discovery
 - **FastAPI Backend**: AI agent server with multi-LLM support (OpenRouter + Google Gemini) via LangChain + MCP client integration
 - **React Chatbot**: Modern glassmorphism frontend with red/black/gray/white theme for natural language database queries
@@ -26,6 +30,7 @@ This repository implements the **complete multi-tier system with multi-LLM suppo
 ## Architecture & Key Components
 
 ### Core Structure
+
 ```
 src/talk_2_tables_mcp/      # MCP Server (database interface)
 ├── server.py               # Main MCP server with FastMCP framework
@@ -52,6 +57,7 @@ react-chatbot/             # Frontend Interface
 ```
 
 ### System Integration
+
 - **MCP Protocol**: FastMCP framework with stdio/SSE/HTTP transports
 - **AI Agent**: Multi-LLM integration via LangChain (OpenRouter + Google Gemini) with retry logic and rate limiting
 - **Frontend**: React TypeScript UI with glassmorphism design and red/black/gray/white theme
@@ -59,6 +65,7 @@ react-chatbot/             # Frontend Interface
 - **Deployment**: Full Docker stack with nginx reverse proxy
 
 ### Remote Access & Deployment
+
 - **Multiple transport modes**: Local CLI, SSE streaming, HTTP with optional stateless mode
 - **Docker deployment**: Full docker-compose with nginx reverse proxy
 - **Network configuration**: Host/port binding, CORS support, health checks
@@ -67,13 +74,16 @@ react-chatbot/             # Frontend Interface
 ## Session Context Management
 
 ### Session Scratchpad
-This project maintains a **session scratchpad** at `.dev-resources/context/session-scratchpad.md` to track the progress done till now and how the project has evolved overtime.  
+
+This project maintains a **session scratchpad** at `.dev-resources/context/session-scratchpad.md` to track the progress done till now and how the project has evolved overtime.
 Read the instructions at `/root/.claude/commands/persist-session.md` to get an understanding on the how to update the session scratchpad.
 
 **Important**: Always read and update the session scratchpad when working on this project to maintain context continuity across different Claude Code sessions.
 
 ### Incremental Development Approach
+
 **Build one task at a time** - this project follows an incremental development strategy:
+
 - Focus on **single, well-defined tasks** rather than attempting massive changes at once
 - Complete and test each component thoroughly before moving to the next
 - Update the session scratchpad after each task completion to maintain progress tracking
@@ -82,6 +92,7 @@ Read the instructions at `/root/.claude/commands/persist-session.md` to get an u
 ## Development Commands
 
 ### Prerequisites
+
 **Always use venv for Python development**
 
 ```bash
@@ -130,7 +141,7 @@ python main.py
 uvicorn main:app --reload --port 8001
 
 # === React App Only ===
-cd react-chatbot && npm start
+cd react-chatbot && npm run dev
 
 # === Quick Testing ===
 python scripts/test_fastapi_server.py
@@ -189,6 +200,7 @@ npm run build
 ```
 
 ### Docker Deployment
+
 ```bash
 # Basic deployment
 docker-compose up -d
@@ -201,6 +213,7 @@ docker-compose --profile monitoring up -d
 ```
 
 ### Data Setup
+
 ```bash
 # Generate test database with sample data
 python scripts/setup_test_db.py
@@ -212,6 +225,7 @@ python scripts/test_remote_server.py
 ## Configuration & Environment
 
 ### Key Environment Variables
+
 ```bash
 # === MCP Server Configuration ===
 DATABASE_PATH="test_data/sample.db"      # SQLite database location
@@ -232,11 +246,12 @@ MCP_SERVER_URL="http://localhost:8000/mcp"  # MCP server endpoint
 
 # === Development Ports ===
 # MCP Server: 8000
-# FastAPI Server: 8001  
+# FastAPI Server: 8001
 # React Dev Server: 3000
 ```
 
 ### Configuration Management
+
 - **Pydantic v2** models with field validation
 - **Environment variable override** support
 - **Path validation** for database and metadata files
@@ -245,12 +260,14 @@ MCP_SERVER_URL="http://localhost:8000/mcp"  # MCP server endpoint
 ## Security Considerations
 
 ### Database Security
+
 - **Read-only access**: Only SELECT queries allowed
 - **SQL injection protection**: Dangerous keywords blocked (`INSERT`, `UPDATE`, `DELETE`, `DROP`, etc.)
 - **Query validation**: Length limits (10,000 chars), result row limits (1,000 rows)
 - **Input sanitization**: Query content validation and logging
 
 ### Network Security
+
 - **CORS configuration**: Configurable cross-origin access
 - **Rate limiting**: Via nginx reverse proxy configuration
 - **Health endpoints**: `/health` for monitoring without exposing data
@@ -259,23 +276,28 @@ MCP_SERVER_URL="http://localhost:8000/mcp"  # MCP server endpoint
 ## Critical Implementation Details
 
 ### Async/Sync Compatibility
+
 The server supports both sync and async execution:
+
 - `server.run()` - synchronous execution for stdio transport
 - `server.run_async()` - asynchronous execution for HTTP/SSE transports
 - **Critical**: Use `run_async()` for remote servers to prevent "asyncio already running" errors
 
 ### Pydantic v2 Migration
+
 Configuration uses Pydantic v2 syntax:
+
 - `@field_validator` instead of `@validator`
 - `Field()` descriptions and constraints
 - Model inheritance and validation chains
 
 ### Resource Discovery
+
 ```python
 # Resource provides metadata for agent routing:
 {
     "server_name": "Talk 2 Tables MCP Server",
-    "database_path": "test_data/sample.db", 
+    "database_path": "test_data/sample.db",
     "description": "SQLite database with customer, product, and order data",
     "business_use_cases": ["Customer analytics", "Sales reporting", ...],
     "tables": {
@@ -289,12 +311,14 @@ Configuration uses Pydantic v2 syntax:
 ## Testing Architecture
 
 ### Test Coverage
+
 - **Unit tests**: Database operations, query validation, security checks
 - **Integration tests**: MCP protocol compliance, transport modes
 - **End-to-end tests**: Full client-server interaction with sample data
 - **Security tests**: SQL injection attempts, unauthorized query types
 
 ### Test Data Management
+
 - **Sample database**: `test_data/sample.db` with realistic business data
 - **Test data generation**: `scripts/setup_test_db.py` creates reproducible datasets
 - **Mock data**: Used exclusively in tests, never in production code
@@ -302,14 +326,16 @@ Configuration uses Pydantic v2 syntax:
 ## File Organization Rules
 
 ### Directory Structure
+
 - **`src/`**: Source code with package structure for PyPI deployment
-- **`test_data/`**: Sample databases and test datasets  
+- **`test_data/`**: Sample databases and test datasets
 - **`scripts/`**: Utility scripts for setup, testing, deployment
 - **`resources/`**: Metadata, configuration, and reports
 - **`resources/context/session-scratchpad.md`**: **Session context tracking** - maintains record of completed tasks and current project state
 - **`tests/`**: Unit and integration tests
 
 ### File Size Limits
+
 - **Maximum 800 lines per file** - enforce by splitting large modules
 - **Single responsibility**: Each module has one clear purpose
 - **Function length**: Keep functions under 80 lines when possible
@@ -317,12 +343,14 @@ Configuration uses Pydantic v2 syntax:
 ## Known Issues & Fixes Applied
 
 ### Critical Bug Fixes
+
 1. **Pydantic v1→v2**: Updated validator decorators and field definitions
-2. **AsyncIO conflicts**: Added `run_async()` method for remote servers  
+2. **AsyncIO conflicts**: Added `run_async()` method for remote servers
 3. **Resource registration**: Removed invalid `ctx` parameter from resource functions
 4. **Host/port configuration**: Use `self.mcp.settings` for server binding
 
 ### Configuration Pitfalls
+
 - **Database paths**: Must be relative to project root or absolute
 - **Metadata validation**: JSON schema must match Pydantic models
 - **Transport selection**: stdio for local CLI, http for remote access
@@ -331,13 +359,16 @@ Configuration uses Pydantic v2 syntax:
 ## Integration with Larger System
 
 ### MCP Client Integration
+
 This server is designed to be discovered and used by MCP clients:
+
 1. **Resource discovery**: Client calls `list_resources` to get metadata
-2. **Tool discovery**: Client calls `list_tools` to see available query capabilities  
+2. **Tool discovery**: Client calls `list_tools` to see available query capabilities
 3. **Query execution**: Client calls `execute_query` tool with SELECT statements
 4. **Result processing**: Client receives structured JSON with columns and rows
 
 ### Future Integration Points
+
 - **Authentication layer**: Ready for API key or OAuth integration
 - **Multiple databases**: Architecture supports multiple database configurations
 - **Monitoring integration**: Prometheus metrics and health check endpoints
@@ -346,11 +377,13 @@ This server is designed to be discovered and used by MCP clients:
 ## Deployment Considerations
 
 ### Development vs Production
+
 - **Development**: Use stdio transport with local database files
 - **Production**: Use HTTP transport with nginx reverse proxy and SSL
 - **Testing**: Use in-memory or temporary databases with test data
 
 ### Scaling Strategies
+
 - **Horizontal**: Multiple server instances with load balancer
 - **Vertical**: Increase database connection limits and memory
 - **Caching**: Add query result caching for frequently accessed data
@@ -359,6 +392,7 @@ This server is designed to be discovered and used by MCP clients:
 ## Common Development Workflows
 
 ### Starting Fresh Development Session
+
 ```bash
 # 1. Activate environment and check status
 source venv/bin/activate
@@ -372,13 +406,14 @@ pip install -e ".[dev,fastapi]" && cd react-chatbot && npm install && cd ..
 
 # 4. Start development stack (3 terminals)
 python -m talk_2_tables_mcp.remote_server  # Terminal 1
-cd fastapi_server && python main.py        # Terminal 2  
+cd fastapi_server && python main.py        # Terminal 2
 ./start-chatbot.sh                          # Terminal 3
 ```
 
 ### Debugging Common Issues
 
 **MCP Connection Issues:**
+
 ```bash
 # Test MCP server directly
 python scripts/test_remote_server.py
@@ -388,6 +423,7 @@ python -m talk_2_tables_mcp.server --transport streamable-http --port 8000
 ```
 
 **React Build Failures:**
+
 ```bash
 cd react-chatbot
 npm run build  # Validates TypeScript compilation
@@ -395,6 +431,7 @@ npm test       # Runs test suite
 ```
 
 **FastAPI Server Issues:**
+
 ```bash
 # Test FastAPI endpoints directly
 python scripts/test_fastapi_server.py
@@ -404,6 +441,7 @@ echo $OPENROUTER_API_KEY
 ```
 
 ### Essential File Locations
+
 - **Session context**: `.dev-resources/context/session-scratchpad.md` (READ FIRST)
 - **MCP server**: `src/talk_2_tables_mcp/server.py`
 - **FastAPI backend**: `fastapi_server/main.py`

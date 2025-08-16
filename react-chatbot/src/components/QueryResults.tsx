@@ -29,22 +29,22 @@ import {
   ContentCopy as CopyIcon,
   Schedule as TimeIcon,
 } from '@mui/icons-material';
-import { QueryResult } from '../types/chat.types';
+import type { QueryResult } from '../types/chat.types';
 
 interface QueryResultsProps {
   queryResult: QueryResult;
   className?: string;
 }
 
-const QueryResults: React.FC<QueryResultsProps> = ({ 
-  queryResult, 
-  className = '' 
+const QueryResults: React.FC<QueryResultsProps> = ({
+  queryResult,
+  className = ''
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const itemsPerPage = 10;
 
   const { data = [], columns = [] } = queryResult;
@@ -52,7 +52,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   // Filter data based on search term
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
-    
+
     return data.filter(row =>
       Object.values(row).some(value =>
         String(value).toLowerCase().includes(searchTerm.toLowerCase())
@@ -67,26 +67,26 @@ const QueryResults: React.FC<QueryResultsProps> = ({
     return [...filteredData].sort((a, b) => {
       const aVal = a[sortColumn];
       const bVal = b[sortColumn];
-      
+
       // Handle null/undefined values
       if (aVal == null && bVal == null) return 0;
       if (aVal == null) return sortDirection === 'asc' ? -1 : 1;
       if (bVal == null) return sortDirection === 'asc' ? 1 : -1;
-      
+
       // Convert to strings for comparison
       const aStr = String(aVal);
       const bStr = String(bVal);
-      
+
       // Try numeric comparison first
       const aNum = Number(aStr);
       const bNum = Number(bStr);
-      
+
       if (!isNaN(aNum) && !isNaN(bNum)) {
         return sortDirection === 'asc' ? aNum - bNum : bNum - aNum;
       }
-      
+
       // String comparison
-      return sortDirection === 'asc' 
+      return sortDirection === 'asc'
         ? aStr.localeCompare(bStr)
         : bStr.localeCompare(aStr);
     });
@@ -131,7 +131,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   const exportToCSV = () => {
     const csvContent = [
       columns.join(','),
-      ...sortedData.map(row => 
+      ...sortedData.map(row =>
         columns.map(col => {
           const value = row[col];
           // Escape quotes and wrap in quotes if contains comma or quotes
@@ -156,7 +156,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
     try {
       const textContent = [
         columns.join('\t'),
-        ...sortedData.map(row => 
+        ...sortedData.map(row =>
           columns.map(col => String(row[col] ?? '')).join('\t')
         )
       ].join('\n');
@@ -169,9 +169,9 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   };
 
   return (
-    <Paper 
-      variant="outlined" 
-      sx={{ 
+    <Paper
+      variant="outlined"
+      sx={{
         mt: 2,
         overflow: 'hidden',
         border: 1,
@@ -273,13 +273,13 @@ const QueryResults: React.FC<QueryResultsProps> = ({
           </TableHead>
           <TableBody>
             {paginatedData.map((row, index) => (
-              <TableRow 
+              <TableRow
                 key={index}
                 hover
                 sx={{ '&:nth-of-type(odd)': { bgcolor: 'action.hover' } }}
               >
                 {columns.map(column => (
-                  <TableCell 
+                  <TableCell
                     key={column}
                     sx={{
                       maxWidth: 200,

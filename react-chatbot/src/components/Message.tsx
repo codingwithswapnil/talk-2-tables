@@ -20,7 +20,7 @@ import {
   ContentCopy as CopyIcon,
   Schedule as TimeIcon,
 } from '@mui/icons-material';
-import { ChatMessage } from '../types/chat.types';
+import type { ChatMessage } from '../types/chat.types';
 import QueryResults from './QueryResults';
 
 interface MessageProps {
@@ -30,23 +30,23 @@ interface MessageProps {
 
 const Message: React.FC<MessageProps> = ({ message, className = '' }) => {
   const formatTimestamp = (timestamp: Date): string => {
-    return timestamp.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return timestamp.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
   const formatContent = (content: string): React.ReactElement[] => {
     // Split content by code blocks
     const parts = content.split(/(```[\s\S]*?```)/);
-    
+
     return parts.map((part, index) => {
       if (part.startsWith('```') && part.endsWith('```')) {
         // This is a code block
         const code = part.slice(3, -3);
         const [language, ...codeLines] = code.split('\n');
         const codeContent = codeLines.join('\n');
-        
+
         return (
           <Box
             key={index}
@@ -94,11 +94,11 @@ const Message: React.FC<MessageProps> = ({ message, className = '' }) => {
   };
 
   const isUser = message.role === 'user';
-  
+
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
+    <Box
+      sx={{
+        display: 'flex',
         flexDirection: 'column',
         alignItems: isUser ? 'flex-end' : 'flex-start',
         mb: 3,
@@ -107,11 +107,11 @@ const Message: React.FC<MessageProps> = ({ message, className = '' }) => {
       }}
     >
       {/* Message Header */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1, 
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
           mb: 0.5,
           opacity: 0,
           transition: 'opacity 0.2s',
@@ -135,7 +135,7 @@ const Message: React.FC<MessageProps> = ({ message, className = '' }) => {
           <CopyIcon fontSize="small" />
         </IconButton>
       </Box>
-      
+
       {/* Message Content */}
       <Box
         className="message-container"
@@ -187,7 +187,7 @@ const Message: React.FC<MessageProps> = ({ message, className = '' }) => {
                 <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
                   {formatContent(message.content)}
                 </Typography>
-                
+
                 {/* Show query results if available */}
                 {message.queryResult && (
                   <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
@@ -197,7 +197,7 @@ const Message: React.FC<MessageProps> = ({ message, className = '' }) => {
                     <QueryResults queryResult={message.queryResult} />
                   </Box>
                 )}
-                
+
                 {/* Show error if present */}
                 {message.error && (
                   <Alert severity="error" sx={{ mt: 1 }}>

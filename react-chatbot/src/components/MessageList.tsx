@@ -17,7 +17,7 @@ import {
   SmartToy as BotIcon,
   Chat as ChatIcon,
 } from '@mui/icons-material';
-import { ChatMessage } from '../types/chat.types';
+import type { ChatMessage } from '../types/chat.types';
 import Message from './Message';
 
 interface MessageListProps {
@@ -26,10 +26,10 @@ interface MessageListProps {
   className?: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ 
-  messages, 
+const MessageList: React.FC<MessageListProps> = ({
+  messages,
   isTyping = false,
-  className = '' 
+  className = ''
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,7 +38,7 @@ const MessageList: React.FC<MessageListProps> = ({
   useEffect(() => {
     const scrollToBottom = () => {
       if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
+        messagesEndRef.current.scrollIntoView({
           behavior: 'smooth',
           block: 'end'
         });
@@ -81,12 +81,12 @@ const MessageList: React.FC<MessageListProps> = ({
             </Box>
 
             {/* Example Queries */}
-            <Paper 
+            <Paper
               elevation={1}
-              sx={{ 
-                p: 3, 
-                textAlign: 'left', 
-                maxWidth: 600, 
+              sx={{
+                p: 3,
+                textAlign: 'left',
+                maxWidth: 600,
                 mx: 'auto',
                 bgcolor: 'background.paper',
                 border: 1,
@@ -131,17 +131,17 @@ const MessageList: React.FC<MessageListProps> = ({
       <Container maxWidth="md" sx={{ py: 2 }}>
         {/* Messages */}
         {messages.map((message) => (
-          <Message 
-            key={message.id} 
+          <Message
+            key={message.id}
             message={message}
           />
         ))}
-        
+
         {/* Typing indicator */}
         {isTyping && (
-          <Box 
-            sx={{ 
-              display: 'flex', 
+          <Box
+            sx={{
+              display: 'flex',
               alignItems: 'flex-start',
               gap: 1,
               mb: 3,
@@ -181,7 +181,7 @@ const MessageList: React.FC<MessageListProps> = ({
             </Paper>
           </Box>
         )}
-        
+
         {/* Scroll anchor */}
         <div ref={messagesEndRef} />
       </Container>

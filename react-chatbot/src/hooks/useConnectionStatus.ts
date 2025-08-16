@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ConnectionStatus } from '../types/chat.types';
+import type { ConnectionStatus } from '../types/chat.types';
 import { apiService } from '../services/api';
 
 interface UseConnectionStatusProps {
@@ -35,12 +35,12 @@ export const useConnectionStatus = ({
 
   const checkStatus = useCallback(async () => {
     const now = new Date();
-    
+
     try {
       // Check FastAPI server health
       const healthResponse = await apiService.checkHealth();
       const fastapiConnected = healthResponse.status === 'healthy';
-      
+
       let mcpConnected = false;
       let mcpError: string | undefined;
 
@@ -60,16 +60,16 @@ export const useConnectionStatus = ({
         lastChecked: now,
         fastapi_status: fastapiConnected ? 'connected' : 'error',
         mcp_status: mcpConnected ? 'connected' : 'error',
-        error: !fastapiConnected 
+        error: !fastapiConnected
           ? 'FastAPI server unreachable'
-          : !mcpConnected 
+          : !mcpConnected
             ? `MCP server issue: ${mcpError || 'Connection failed'}`
             : undefined
       });
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Connection check failed';
-      
+
       setStatus({
         isConnected: false,
         lastChecked: now,
@@ -86,17 +86,17 @@ export const useConnectionStatus = ({
     }
 
     setIsMonitoring(true);
-    
+
     // Initial check
     checkStatus();
-    
+
     // Set up interval
     intervalRef.current = setInterval(checkStatus, checkInterval);
   }, [isMonitoring, checkStatus, checkInterval]);
 
   const stopMonitoring = useCallback(() => {
     setIsMonitoring(false);
-    
+
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = undefined;

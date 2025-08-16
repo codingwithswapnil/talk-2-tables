@@ -2,12 +2,14 @@
  * API service for communicating with FastAPI backend
  */
 
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { 
-  ChatCompletionRequest, 
-  ChatCompletionResponse, 
-  HealthResponse, 
-  ApiError 
+import axios from 'axios';
+import type { AxiosResponse } from 'axios';
+import type { AxiosInstance } from 'axios';
+import type {
+  ChatCompletionRequest,
+  ChatCompletionResponse,
+  HealthResponse,
+  ApiError
 } from '../types/chat.types';
 
 class ApiService {
@@ -15,8 +17,8 @@ class ApiService {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8001';
-    
+    this.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
+
     this.client = axios.create({
       baseURL: this.baseURL,
       timeout: 30000, // 30 second timeout
@@ -29,7 +31,7 @@ class ApiService {
     // Request interceptor for logging
     this.client.interceptors.request.use(
       (config) => {
-        if (process.env.REACT_APP_DEBUG === 'true') {
+        if (import.meta.env.REACT_APP_DEBUG === 'true') {
           console.log('API Request:', config.method?.toUpperCase(), config.url);
         }
         return config;
@@ -43,7 +45,7 @@ class ApiService {
     // Response interceptor for error handling
     this.client.interceptors.response.use(
       (response) => {
-        if (process.env.REACT_APP_DEBUG === 'true') {
+        if (import.meta.env.REACT_APP_DEBUG === 'true') {
           console.log('API Response:', response.status, response.config.url);
         }
         return response;
