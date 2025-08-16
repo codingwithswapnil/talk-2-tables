@@ -21,6 +21,7 @@ interface UseChatReturn {
   clearMessages: () => void;
   retryLastMessage: () => Promise<void>;
   isTyping: boolean;
+  archiveCurrentChat: () => void;
 }
 
 const STORAGE_KEY = 'talk2tables_chat_messages';
@@ -234,12 +235,27 @@ export const useChat = ({
     }
   }, [persistMessages]);
 
+  const archiveCurrentChat = useCallback(() => {
+    if (persistMessages) {
+      const current = localStorage.getItem(STORAGE_KEY);
+      if (current && current !== '[]') {
+        // Use timestamp for unique history key
+        const historyKey = `talk2tables_chat_messages_history_${Date.now()}`;
+        localStorage.setItem(historyKey, current);
+      }
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    setMessages([]);
+    setError(null);
+  }, [persistMessages]);
+
   return {
     messages,
     isLoading,
     error,
     sendMessage,
     clearMessages,
+    archiveCurrentChat,
     retryLastMessage,
     isTyping
   };

@@ -17,6 +17,7 @@ import {
 import {
   Refresh as RefreshIcon,
   Clear as ClearIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
 import { useChat } from '../hooks/useChat';
 import { useConnectionStatus } from '../hooks/useConnectionStatus';
@@ -37,6 +38,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
     error,
     sendMessage,
     clearMessages,
+    archiveCurrentChat,
     retryLastMessage,
     isTyping
   } = useChat({
@@ -56,6 +58,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
 
   const handleSendMessage = async (content: string) => {
     await sendMessage(content);
+  };
+
+  const handleAddChat = () => {
+    archiveCurrentChat();
   };
 
   const handleClearChat = () => {
@@ -91,6 +97,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
             sx={{ ml: 1 }}
           >
             <ClearIcon />
+          </IconButton>
+
+          <IconButton
+            color="inherit"
+            onClick={handleAddChat}
+            disabled={messages.length === 0}
+            title="New chat"
+            sx={{ ml: 1 }}
+          >
+            <AddIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
