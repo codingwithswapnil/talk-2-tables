@@ -316,7 +316,7 @@ TRANSPORT="streamable-http"
 
 # FastAPI Server - Multi-LLM Support
 LLM_PROVIDER="openrouter"  # or "gemini"
-OPENROUTER_API_KEY="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"
+OPENROUTER_API_KEY="your_openrouter_api_key_here"
 GEMINI_API_KEY="your_gemini_api_key_here"
 MCP_SERVER_URL="http://localhost:8000"
 ```
